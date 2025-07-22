@@ -1,0 +1,20 @@
+# .env
+# Rutas de datos
+DATA_INPUT_DIR=
+DATA_OUTPUT_DIR=
+VECTOR_STORE_PATH=
+
+# Configuración de ChromaDB
+CHROMA_COLLECTION_PREFIX=
+CHROMA_PERSIST_DIRECTORY=
+
+# Archivo con domicilios preprocesados
+PROCESSED_DATA_PATH=data/output/file.csv
+
+# Configuración del modelo
+EMBEDDING_MODEL=paraphrase-multilingual-MiniLM-L12-v2
+HYBRID_SEARCH_ALPHA=0.5
+
+# Configuración de la API
+API_HOST=0.0.0.0
+API_PORT=8000

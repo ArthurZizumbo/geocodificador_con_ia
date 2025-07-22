@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "geocodificador_ine_mvp"
+version = "0.1.0"
+description = "Geocodificador de alta precisión para el INE usando búsqueda semántica híbrida."
+authors = ["Arthur Zizumbo"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+sentence-transformers = "*"
+faiss-cpu = "*"
+numpy = "*"
+pandas = "*"
+scikit-learn = "*"
+typer = "*"
+chromadb = "^1.0.15"
+rank-bm25 = "^0.2.2"
+haversine = "^2.9.0"
+python-dotenv = "^1.1.1"
+pip = "^25.1.1"
+python-json-logger = "^3.3.0"
+polars = "^1.31.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+black = "*"
+
+[tool.pytest.ini_options]
+pythonpath = "src"
+testpaths = "tests"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

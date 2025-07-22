@@ -1,0 +1,21 @@
+# Ignorar el historial de Git
+.git/
+
+# Ignorar configuraciones de IDE y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Ignorar caches de Python y pytest
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Ignorar el entorno virtual de Poetry si se crea localmente en el proyecto
+# (Poetry por defecto lo crea en otra parte, pero es buena práctica incluirlo)
+.venv/
+
+# No incluir los reportes de cobertura de pruebas
+.coverage

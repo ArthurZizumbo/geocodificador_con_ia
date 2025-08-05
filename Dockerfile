@@ -1,27 +1,32 @@
-# ---- Etapa 1: Builder (Sin cambios) ----
-# Usamos una imagen completa para instalar dependencias con Poetry
-# FROM python:3.12-slim as builder
-FROM python:3.12-slim as base
+# Usa una imagen base de Python slim para mantener el tamaño bajo
+FROM python:3.12-slim AS final
 
-WORKDIR /app
+# Crea un usuario no-root por seguridad y establece el directorio de trabajo
+RUN useradd --create-home --shell /bin/bash appuser
+WORKDIR /home/appuser
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+# Previene que Python escriba archivos .pyc y asegura que la salida no se almacene en búfer
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-FROM base
+# Copia el archivo de requerimientos (que ya no tiene torch) y asígnale el propietario correcto
+COPY --chown=appuser:appuser requirements.txt .
 
-# Establecemos el directorio de trabajo
-WORKDIR /app
+# Crea y activa el entorno virtual
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Copiamos el entorno virtual con las dependencias ya instaladas desde la etapa 'builder'
-# COPY --from=builder /app/.venv ./.venv
-COPY --from=base /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
+# 2. Instala las dependencias desde nuestro archivo de requerimientos limpio.
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiamos los artefactos y el código fuente necesarios
-COPY src/ ./src/
+# Copia el código fuente de la aplicación y asigna el propietario
+COPY --chown=appuser:appuser ./src ./src
 
-# Exponemos el puerto de la API
+# Cambia al usuario no-root para la ejecución del proceso
+USER appuser
+
+# Expone el puerto que la aplicación usará
 EXPOSE 8000
 
-# Comando para iniciar el servidor. Uvicorn se encuentra gracias a la variable PATH.
+# Define el comando para correr la aplicación
 CMD ["uvicorn", "src.geocodificador_ine_mvp.main:app", "--host", "0.0.0.0", "--port", "8000"]

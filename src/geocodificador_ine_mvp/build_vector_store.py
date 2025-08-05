@@ -9,7 +9,9 @@ from typing import Optional
 from sentence_transformers import SentenceTransformer
 import chromadb
 
-load_dotenv()
+# Carga variables de .env solo si estamos en modo de desarrollo
+if os.getenv('ENV_MODE') == 'development':
+    load_dotenv()
 
 app = typer.Typer()
 

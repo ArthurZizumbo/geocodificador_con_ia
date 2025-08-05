@@ -8,7 +8,9 @@ from dotenv import load_dotenv
 from geocodificador_ine_mvp.data_preprocessing import process_data # type: ignore
 from geocodificador_ine_mvp.build_vector_store import build_vector_store # type: ignore
 
-load_dotenv()
+# Carga variables de .env solo si estamos en modo de desarrollo
+if os.getenv('ENV_MODE') == 'development':
+    load_dotenv()
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_artifacts():

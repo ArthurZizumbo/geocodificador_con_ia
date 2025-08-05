@@ -34,3 +34,5 @@ desktop.ini
 /data/
 /vector_store/
 *.log
+
+context/

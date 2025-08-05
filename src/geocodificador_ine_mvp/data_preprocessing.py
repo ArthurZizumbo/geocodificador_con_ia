@@ -8,8 +8,9 @@ import os
 from dotenv import load_dotenv
 import multiprocessing
 
-# Cargar variables de entorno desde un archivo .env si existe
-load_dotenv()
+# Carga variables de .env solo si estamos en modo de desarrollo
+if os.getenv('ENV_MODE') == 'development':
+    load_dotenv()
 
 # --- Creamos una aplicación Typer para la interfaz de línea de comandos ---
 app = typer.Typer()

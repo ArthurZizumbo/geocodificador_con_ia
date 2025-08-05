@@ -12,7 +12,9 @@ from rank_bm25 import BM25Okapi
 import polars as pl
 import numpy as np
 
-load_dotenv()
+# Carga variables de .env solo si estamos en modo de desarrollo
+if os.getenv('ENV_MODE') == 'development':
+    load_dotenv()
 
 app = typer.Typer()
 

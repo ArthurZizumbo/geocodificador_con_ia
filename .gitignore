@@ -36,3 +36,17 @@ desktop.ini
 *.log
 
 context/
+
+# Terraform files (sensitive)
+terraform/terraform.tfvars
+terraform/terraform-sa-key.json
+terraform/set-terraform-env.bat
+terraform/backend-config.hcl
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/.terraform.lock.hcl
+terraform/bootstrap/.terraform/
+terraform/bootstrap/*.tfstate
+terraform/bootstrap/*.tfstate.*
+terraform/bootstrap/.terraform.lock.hcl

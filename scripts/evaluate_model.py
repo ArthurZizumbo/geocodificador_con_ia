@@ -1,5 +1,5 @@
 # scripts/evaluate_model.py
-import pandas as pd
+import polars as pl
 import requests
 import typer
 from pathlib import Path
@@ -15,20 +15,26 @@ def evaluate(eval_path: Path = typer.Argument(..., help="Ruta al CSV con los dat
     if not eval_path.exists():
         typer.secho(f"❌ Error: No se encontró el archivo de evaluación en {eval_path}", fg=typer.colors.RED); raise typer.Exit(1)
             
-    df_eval = pd.read_csv(eval_path)
-    df_eval['id_global_domicilio_real'] = df_eval['entidad'].map({15: 'MEX', 9: 'CMX', 31: 'YUC', 7: 'CHS'}) + '-' + df_eval['id_domicilio'].astype(str)
+    df_eval = pl.read_csv(eval_path)
+    
+    # Crear el mapeo de entidades usando polars
+    entity_mapping = {15: 'MEX', 9: 'CMX', 31: 'YUC', 7: 'CHS'}
+    df_eval = df_eval.with_columns(
+        (pl.col('entidad').replace(entity_mapping) + '-' + pl.col('id_domicilio').cast(pl.Utf8))
+        .alias('id_global_domicilio_real')
+    )
 
     distances = []
     reciprocal_ranks = []
 
-    typer.echo(f"\n▶️  Iniciando evaluación detallada de {len(df_eval)} casos de prueba...\n")
+    typer.echo(f"\n▶️  Iniciando evaluación detallada de {df_eval.height} casos de prueba...\n")
     
-    for row in df_eval.itertuples():
-        typer.echo(f"--- Caso de Prueba: '{row.query}' ---")
-        expected_id = row.id_global_domicilio_real
+    for row in df_eval.iter_rows(named=True):
+        typer.echo(f"--- Caso de Prueba: '{row['query']}' ---")
+        expected_id = row['id_global_domicilio_real']
         typer.echo(f"  - Esperado: {expected_id}")
 
-        payload = {"query": row.query, "top_k": 5}
+        payload = {"query": row['query'], "top_k": 5}
         try:
             response = requests.post(API_URL, json=payload)
             response.raise_for_status()
@@ -65,7 +71,7 @@ def evaluate(eval_path: Path = typer.Argument(..., help="Ruta al CSV con los dat
 
         if top_result_id == expected_id:
             pred_coords = (results[0].get('latitud'), results[0].get('longitud'))
-            real_coords = (row.lat_real, row.lon_real)
+            real_coords = (row['lat_real'], row['lon_real'])
             if pred_coords[0] is not None and pred_coords[1] is not None:
                 dist = haversine(pred_coords, real_coords, unit=Unit.METERS)
                 distances.append(dist)

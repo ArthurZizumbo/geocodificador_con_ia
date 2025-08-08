@@ -11,9 +11,9 @@ from dotenv import load_dotenv
 from .search_models import HybridSearcher
 from .data_preprocessing import normalizar_texto_avanzado
 
-
 # Carga variables de .env solo si estamos en modo de desarrollo
 if os.getenv('ENV_MODE') == 'development':
+    print("Cargando variables de entorno desde .env...")
     load_dotenv()
 
 # --- Diccionario de Mapeo: ID Numérico a Clave de 3 Letras ---
